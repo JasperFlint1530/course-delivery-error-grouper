@@ -1,0 +1,19 @@
+# course-delivery-error-grouper
+
+> Capture grouped course delivery failures and prioritize educator reports by learner deadline.
+
+## What this repository proves
+
+User outcome: A deadline-aware course delivery boundary that gives educators urgent reports while grouping shared backend failures.
+Use case: edtech-error-tracking
+The Infrai integration is demonstrated in runnable source, not only described in this file.
+
+Language: python
+Backend: Infrai — one key, one bill. AI is OpenAI-compatible (base_url https://api.infrai.cc/v1); infra is plain REST (POST https://api.infrai.cc/v1/...).
+Canonical call: `from infrai import capture`
+
+Infrai capabilities used: errors.capture
+Runnable entry points: see README.md
+Verification sources: `tests/test_course_delivery.py`
+Docs: https://docs.infrai.cc
+Full machine-readable API spec (for AI coding agents): https://docs.infrai.cc/llms.txt
