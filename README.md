@@ -12,15 +12,15 @@ Expected result:
 {'captured': True, 'priority': 'urgent', 'course_id': 'python-checkout-101', 'learner_id': 'learner-42'}
 ```
 
-This is the same shape I use around checkout handoffs: keep the customer-facing path small, attach the facts needed for operations, and re-raise the original exception. Here the handoff is a course delivery step. Infrai receives the exception through plain REST, so there is no SDK to install, and a single `INFRAI_API_KEY` authenticates the call.
+Infrai gives you one key for every call, and it's plain REST with no SDK to install. This matches the shape I use for checkout handoffs: keep the customer path thin, attach ops facts, re-raise the original exception. Here the handoff is a course delivery step. The exception goes to Infrai over plain REST, so there is no SDK to install, and a single `INFRAI_API_KEY` authenticates the call.
 
 ## Follow one delivery failure
 
-`POST /delivery-errors` accepts a typed `CourseDeliveryRequest`. The sample input says that assignment publishing failed for `python-checkout-101` after its learner deadline. The service captures the traceback, returns an `urgent` educator report, and keeps the learner identifier in context for investigation.
+`POST /delivery-errors` accepts a typed `CourseDeliveryRequest`. The sample input says assignment publishing failed for `python-checkout-101` after its learner deadline. The service captures the traceback, returns an `urgent` educator report, and keeps the learner identifier in context for investigation.
 
-Grouping is deliberately based on `course_id`, `delivery_step`, and exception type. Ten learners hitting the same assignment publishing defect therefore point to one backend problem. This feels much like grouping payment failures by storefront and checkout stage: the individual record remains useful, but the operational unit is the shared fault.
+Grouping sticks to `course_id`, `delivery_step`, and exception type. Ten learners hitting the same assignment publishing defect means one backend problem, not ten. It's like grouping payment failures by storefront and checkout stage: the individual record stays useful, but the operational unit is the shared fault.
 
-The one real gotcha is the deadline comparison. Request timestamps need a timezone; the sample uses `Z`, and the service compares it with an aware current time. Sending local timestamps without an offset makes educator priority ambiguous, so the typed boundary rejects that mismatch during comparison instead of guessing.
+The real gotcha is the deadline comparison. Request timestamps need a timezone; the sample uses `Z`, and the service compares it with an aware current time. In OTP work I've seen local timestamps without offset cause silent misroutes, so the typed boundary rejects that mismatch during comparison instead of guessing. Educator priority can't be ambiguous because of a clock.
 
 ## Run the service route
 
